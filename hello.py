@@ -1,7 +1,12 @@
 import os
+import pymysql
 from flask import Flask, url_for, request, render_template, redirect, flash, session
 
 app = Flask('__name__')
+
+import logging
+from logging.handlers import RotatingFileHandler
+
 
 @app.route("/home")
 @app.route("/home/<name>")
@@ -33,6 +38,7 @@ def login():
             return redirect(url_for('welcome'))
         else:
             error = 'Invalid Username or Password entered'
+            app.logger.warning('Invalid Username or Password entered for user %s', request.form.get('username'))
     return render_template('login.html', error=error)
     
 @app.route('/logout')
@@ -41,7 +47,18 @@ def logout():
     return redirect(url_for('login'))
     
 def valid_user(username, password):
-    if username == password:
+    #mysql
+    MYSQL_DATABASE_HOST = os.getenv('IP','0.0.0.0')
+    MYSQL_DATABASE_USER = 'vishalgupta812'
+    MYSQL_DATABASE_PASSWORD = ''
+    MYSQL_DATABASE_DB = 'flask_demo'
+    
+    conn = pymysql.connect(host=MYSQL_DATABASE_HOST, user=MYSQL_DATABASE_USER, passwd=MYSQL_DATABASE_PASSWORD,db=MYSQL_DATABASE_DB)
+    cursor = conn.cursor()
+    cursor.execute("select * from users where username='%s'and password='%s'" % (username, password))
+    data = cursor.fetchone()
+    
+    if data:
         return True
     else:
         return False
@@ -82,4 +99,10 @@ if __name__ == '__main__':
     app.debug = True
     app.secret_key = '\x0f\xac\x19\xacu9jv|w^\x87\xba\xa0\xd4\xd72)K\x19\xae\xd5\x16\xb8' #Go to python interactive mode and run \
     "import os then os.urandom(24) to generate secrate key"
+    
+    #logging
+    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+    
     app.run(host=host, port=port)
