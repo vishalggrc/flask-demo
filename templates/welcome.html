@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome Page{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+{% endblock %}
+
+{% block content %}    
+    <h1>Welcome Page</h1>
+    <p>Welcome {{ username }}!!!</p>
+{% endblock %}
