@@ -47,17 +47,18 @@ To watch some training videos, visit http://www.youtube.com/user/c9ide.
 
 Some Important Commands:
 
-1. Start debugger: os.debug = True
+1. Create virtual environment and install flask flamework: virtualenv -p python3 venv
 2. run in virtual environment: source venv/bin/activate
 3. For deactivate: deactivate
-4. Trace line by line:  import pdb; pdb.set_trace()     #On the console use n=>next, c=>continue.
-5. Generate secret key
+4. Start debugger: os.debug = True
+5. Trace line by line:  import pdb; pdb.set_trace()     #On the console use n=>next, c=>continue.
+6. Generate secret key
     python3
     import os
     os.urandom(24)
 
-6. Start Mysql: mysql-ctl start
+7. Start Mysql: mysql-ctl start
     Root User: vishalgupta812
     Database Name: c9
-7. Mysql interface: mysql-ctl cli
-8. Install pymysql: pip install -r requirements.txt
+8. Mysql interface: mysql-ctl cli
+9. Install pymysql: pip install -r requirements.txt
