@@ -1,5 +1,5 @@
 import os
-from flask import Flask, url_for, request, render_template, redirect, flash, make_response
+from flask import Flask, url_for, request, render_template, redirect, flash, session
 
 app = Flask('__name__')
 
@@ -29,18 +29,16 @@ def login():
             #return 'User %s logged in!!!' % request.form['username']
             flash("Successfully logged in!!!")
             #return redirect(url_for('welcome', username=request.form.get('username')))
-            response = make_response(redirect(url_for('welcome')))
-            response.set_cookie('username', request.form.get('username'))
-            return response
+            session['username'] = request.form.get('username')
+            return redirect(url_for('welcome'))
         else:
             error = 'Invalid Username or Password entered'
     return render_template('login.html', error=error)
     
 @app.route('/logout')
 def logout():
-    response = make_response(redirect(url_for('login')))
-    response.set_cookie('username', '', expires=0)
-    return response
+    session.pop('username', None)
+    return redirect(url_for('login'))
     
 def valid_user(username, password):
     if username == password:
@@ -50,9 +48,8 @@ def valid_user(username, password):
 
 @app.route('/')
 def welcome():
-    username = request.cookies.get('username')
-    if username:
-        return render_template('welcome.html', username=username)
+    if 'username' in session:
+        return render_template('welcome.html', username=session['username'])
     else:
         return redirect(url_for('login'))
 
@@ -83,5 +80,6 @@ if __name__ == '__main__':
     host = os.getenv("IP", "0.0.0.0")
     port = int(os.getenv("PORT",5000))
     app.debug = True
-    app.secret_key = 'SuperSecretKey1234567890'
+    app.secret_key = '\x0f\xac\x19\xacu9jv|w^\x87\xba\xa0\xd4\xd72)K\x19\xae\xd5\x16\xb8' #Go to python interactive mode and run \
+    "import os then os.urandom(24) to generate secrate key"
     app.run(host=host, port=port)
